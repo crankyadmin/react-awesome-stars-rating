@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import ReactStarsRating from '../../lib';
 
-const ReactStarsRatingComponent = ({ input, isEdit }) => {
+function ReactStarsRatingComponent({ input, isEdit }) {
   return <ReactStarsRating {...input} isEdit={isEdit} />;
-};
+}
 
 ReactStarsRatingComponent.propTypes = {
   isEdit: PropTypes.bool.isRequired,

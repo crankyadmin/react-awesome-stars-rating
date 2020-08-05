@@ -1,44 +1,31 @@
-import React, { PureComponent } from 'react';
-
+import React, { useState } from 'react';
 import ReactStarsRating from '../lib';
 
-class ReactStarsExample extends PureComponent {
-  constructor(props) {
-    super(props);
+function ReactStarsExample() {
+  const [{ value, isEdit, selectedValue }, setState] = useState({
+    value: 3.2,
+    isEdit: true,
+    selectedValue: null,
+  });
 
-    this.state = {
-      value: 3.2,
-      isEdit: true,
-    };
-
-    this.onChange = this.onChange.bind(this);
+  function onChange(value) {
+    setState({ value, isEdit: false, selectedValue: value });
   }
 
-  onChange(value) {
-    this.setState({
-      value,
-      isEdit: false,
-      selectedValue: value,
-    });
-  }
+  return (
+    <section>
+      <ReactStarsRating
+        onChange={onChange}
+        isEdit={isEdit}
+        value={value}
+        isHalf
+        selectedValue={selectedValue}
+        id="simple"
+      />
 
-  render() {
-    const { isEdit, value, selectedValue } = this.state;
-    return (
-      <section>
-        <ReactStarsRating
-          onChange={this.onChange}
-          isEdit={isEdit}
-          value={value}
-          isHalf
-          selectedValue={selectedValue}
-          id="simple"
-        />
-
-        <div>Selected value: {selectedValue}</div>
-      </section>
-    );
-  }
+      <div>Selected value: {selectedValue}</div>
+    </section>
+  );
 }
 
 export default ReactStarsExample;

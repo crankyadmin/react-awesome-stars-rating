@@ -1,9 +1,8 @@
 import React from 'react';
-
 import ReactStarsExample from './ReactStarsExample';
 import ReduxFormExample from './ReduxFormExample';
 
-const Examples = () => {
+function Examples() {
   return (
     <section>
       <section>
@@ -16,6 +15,6 @@ const Examples = () => {
       </section>
     </section>
   );
-};
+}
 
 export default Examples;

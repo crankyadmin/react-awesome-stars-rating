@@ -1,36 +1,25 @@
-import React, { PureComponent } from 'react';
-
+import React, { useState } from 'react';
 import Form from './form';
 
-class FormContainer extends PureComponent {
-  constructor(props) {
-    super(props);
+function FormContainer() {
+  const [{ isEdit, selectedValue }, setState] = useState({
+    isEdit: true,
+    selectedValue: null,
+  });
+  const initialValues = { reactStarsRating: 0 };
 
-    this.state = { isEdit: true };
-    this.handleChange = this.handleChange.bind(this);
-    this.initialValues = {
-      reactStarsRating: 0,
-    };
+  function handleChange(value) {
+    setState({ isEdit: false, selectedValue: value });
   }
 
-  handleChange(value) {
-    this.setState({
-      isEdit: false,
-      selectedValue: value,
-    });
-  }
-
-  render() {
-    const { isEdit, selectedValue } = this.state;
-    const props = {
-      initialValues: this.initialValues,
-      isEdit,
-      selectedValue,
-      handleChange: this.handleChange,
-    };
-
-    return <Form {...props} />;
-  }
+  return (
+    <Form
+      initialValues={initialValues}
+      isEdit={isEdit}
+      selectedValue={selectedValue}
+      handleChange={handleChange}
+    />
+  );
 }
 
 export default FormContainer;

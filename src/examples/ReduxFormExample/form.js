@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Field, reduxForm } from 'redux-form';
-
 import ReactStarsRating from './ReactStarsRating';
 
-const Form = ({ handleSubmit, handleChange, isEdit, selectedValue }) => {
+function Form({ handleSubmit, handleChange, isEdit, selectedValue }) {
   return (
     <section>
       <form onSubmit={handleSubmit}>
@@ -20,7 +19,7 @@ const Form = ({ handleSubmit, handleChange, isEdit, selectedValue }) => {
       <div>Selected value: {selectedValue}</div>
     </section>
   );
-};
+}
 
 Form.propTypes = {
   handleSubmit: PropTypes.func.isRequired,

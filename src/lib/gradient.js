@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Gradient = ({
+function Gradient({
   primaryColor,
   secondaryColor,
   offset,
@@ -10,7 +10,7 @@ const Gradient = ({
   fullId,
   halfId,
   noneId,
-}) => {
+}) {
   if (index === 1) {
     offset = (value % 1) * 100;
   }
@@ -31,7 +31,7 @@ const Gradient = ({
       </defs>
     )
   );
-};
+}
 
 Gradient.propTypes = {
   primaryColor: PropTypes.string.isRequired,

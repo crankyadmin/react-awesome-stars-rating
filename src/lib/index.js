@@ -1,96 +1,74 @@
-import React, { PureComponent } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Star from './star';
 import styles from './styles';
 
-class ReactStarsRating extends PureComponent {
-  constructor(props) {
-    super(props);
+function ReactAwesomeStarsRating({
+  isEdit,
+  className,
+  isArrowSubmit,
+  id,
+  primaryColor,
+  secondaryColor,
+  starGap,
+  isHalf,
+  size,
+  count,
+  value: defaultValue,
+  onChange,
+}) {
+  let [{ value, isSubmitted }, setState] = useState({
+    value: defaultValue,
+    isSubmitted: false,
+  });
 
-    this.state = {
-      value: props.value,
-      isSubmitted: false,
-    };
+  useEffect(() => {
+    setState((prevState) => ({ ...prevState, value: defaultValue }));
+  }, [defaultValue]);
 
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.onBlur = this.onBlur.bind(this);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.value !== prevProps.value) {
-      this.setState({ value: this.props.value });
-    }
-  }
-
-  isMoreThanHalf(event) {
-    const { size } = this.props;
+  function isMoreThanHalf(event) {
     const point = event.clientX - event.target.getBoundingClientRect().left;
 
     return point > size / 2;
   }
 
-  onMouseMove(event) {
-    const { isHalf } = this.props;
+  function onMouseMove(event) {
+    let newValue = Number(event.target.getAttribute('data-stars'));
 
-    let value = Number(event.target.getAttribute('data-stars'));
-
-    if (isHalf) {
-      const isMoreThanHalf = this.isMoreThanHalf(event);
-
-      if (!isMoreThanHalf) {
-        value -= 0.5;
-      }
+    if (isHalf && !isMoreThanHalf(event)) {
+      newValue -= 0.5;
     }
 
-    this.setState({ value });
+    setState((prevState) => ({ ...prevState, value: newValue }));
   }
 
-  onMouseLeave() {
-    const { value } = this.props;
-
-    this.setState({ value: value || 0 });
+  function onMouseLeave() {
+    setState((prevState) => ({ ...prevState, value: defaultValue || 0 }));
   }
 
-  onBlur() {
-    const { onChange } = this.props;
-    const { value } = this.state;
-
+  function onBlur() {
     onChange(value);
-    this.setState({ isSubmitted: true });
+    setState((prevState) => ({ ...prevState, isSubmitted: true }));
   }
 
-  onChange(event) {
-    const { onChange, isHalf } = this.props;
+  function handleChange(event) {
+    let newValue = Number(event.target.getAttribute('data-stars'));
 
-    let value = Number(event.target.getAttribute('data-stars'));
-
-    if (isHalf) {
-      const isMoreThanHalf = this.isMoreThanHalf(event);
-
-      if (!isMoreThanHalf) {
-        value -= 0.5;
-      }
+    if (isHalf && !isMoreThanHalf(event)) {
+      newValue -= 0.5;
     }
 
-    onChange(value);
+    onChange(newValue);
   }
 
-  onChangeStars(newValue) {
-    let { value } = this.state;
-    const { count } = this.props;
-
+  function onChangeStars(newValue) {
     if (value > 0 || value < count) {
-      const { isArrowSubmit, onChange } = this.props;
-
       if ((value > 0 && newValue < 0) || (value < count && newValue > 0)) {
         value = (value % 1 === 0.5 ? value : Math.round(value)) + newValue;
       }
 
-      this.setState({ value });
+      setState((prevState) => ({ ...prevState, value }));
 
       if (isArrowSubmit) {
         onChange(value);
@@ -98,17 +76,15 @@ class ReactStarsRating extends PureComponent {
     }
   }
 
-  onKeyDown(event) {
+  function onKeyDown(event) {
     const { keyCode } = event;
-    const { value } = this.state;
-    const { isHalf, onChange } = this.props;
 
     switch (keyCode) {
       case 37:
-        this.onChangeStars(isHalf ? -0.5 : -1);
+        onChangeStars(isHalf ? -0.5 : -1);
         break;
       case 39:
-        this.onChangeStars(isHalf ? 0.5 : 1);
+        onChangeStars(isHalf ? 0.5 : 1);
         break;
       case 13:
         onChange(value);
@@ -118,18 +94,7 @@ class ReactStarsRating extends PureComponent {
     }
   }
 
-  renderStars() {
-    const {
-      count,
-      size,
-      isHalf,
-      isEdit,
-      primaryColor,
-      secondaryColor,
-      starGap,
-      id,
-    } = this.props;
-    const { value } = this.state;
+  function renderStars() {
     const starsList = [];
     let props = { primaryColor, secondaryColor };
     const fullId = `fullId-${id}`;
@@ -137,12 +102,7 @@ class ReactStarsRating extends PureComponent {
     const noneId = `noneId-${id}`;
 
     if (isEdit) {
-      props = {
-        ...props,
-        onMouseMove: this.onMouseMove,
-        onMouseLeave: this.onMouseLeave,
-        onChange: this.onChange,
-      };
+      props = { ...props, onMouseMove, onMouseLeave, onChange: handleChange };
     }
 
     for (let i = 1; i <= count; i++) {
@@ -171,35 +131,30 @@ class ReactStarsRating extends PureComponent {
     return starsList;
   }
 
-  render() {
-    const { isEdit, className, isArrowSubmit, id } = this.props;
-    const stars = this.renderStars();
+  function getProps() {
     let props = { tabIndex: -1 };
-    const { isSubmitted } = this.state;
 
     if ((isEdit || isArrowSubmit) && !isSubmitted) {
-      props = {
-        onKeyDown: this.onKeyDown,
-        onBlur: this.onBlur,
-        tabIndex: 0,
-      };
+      props = { onKeyDown, onBlur, tabIndex: 0 };
     }
 
-    return (
-      <span
-        id={id}
-        role="button"
-        className={className}
-        {...props}
-        style={isEdit ? styles.activeContainer : styles.inActiveContainer}
-      >
-        {stars}
-      </span>
-    );
+    return props;
   }
+
+  return (
+    <span
+      id={id}
+      role="button"
+      className={className}
+      {...getProps()}
+      style={isEdit ? styles.activeContainer : styles.inActiveContainer}
+    >
+      {renderStars()}
+    </span>
+  );
 }
 
-ReactStarsRating.propTypes = {
+ReactAwesomeStarsRating.propTypes = {
   onChange: PropTypes.func.isRequired,
   count: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
@@ -214,7 +169,7 @@ ReactStarsRating.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-ReactStarsRating.defaultProps = {
+ReactAwesomeStarsRating.defaultProps = {
   isEdit: true,
   isHalf: true,
   count: 5,
@@ -229,4 +184,4 @@ ReactStarsRating.defaultProps = {
   id: `${Date.now()}`,
 };
 
-export default ReactStarsRating;
+export default ReactAwesomeStarsRating;
